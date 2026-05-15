@@ -310,9 +310,36 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-testcase-design.md
 - 执行 `bash src/scripts/resume-check.sh` 识别已完成页面
 - 从 design.md 中读取页面清单，跳过已完成页面，确定待开发顺序
 
+**Step 1b: 任务编排确认（人工确认开发计划）**
+
+[PM] 生成任务编排计划
+
+PM 必须在开发循环开始前，向用户呈现完整的开发计划：
+
+```
+[任务编排计划]
+需求编号: {REQ-ID}
+总页面数: {N} | 已完成: {M} | 待开发: {N-M}
+
+开发顺序:
+  {序号}. {page} — DE开发 → TE审计 → 人工检查 ✓
+  {序号}. {page} — DE开发 → TE审计 → 人工检查 ✓
+  ...
+
+循环后统一步骤:
+  → SR2 人工审批（覆盖所有页面）
+  → TE 最终审计
+  → SR3 人工审批
+
+请确认计划是否正确，或调整开发顺序。
+```
+
+- 用户确认：继续 Step 2
+- 用户调整：按用户要求修改顺序后重新呈现，再次确认
+
 **Token 节流规则（贯穿整个 apply 流程）：**
 - 每完成一个页面的开发+审计后，清洗上下文中该页面的 HTML 代码
-- 只保留文件路径引用（如"已完成: deliverables/REQ001/temp_output/chapter-01.html"）
+- 只保留文件路径引用（如"已完成: deliverables/REQ001/output/pages/chapter-01.html"）
 - 下一页开发时重新读取 design.md 对应段落，不依赖上下文中的历史代码
 
 **Step 2-3: 逐页开发+审计循环**
@@ -330,9 +357,8 @@ END FOR
 
 所有页面开发+审计+人工检查完成后:
     Step 4: 人工审批 SR2（正式审批，覆盖所有页面）
-    Step 5: DE 代码合并（所有页面）
-    Step 6: TE 最终审计（所有页面）
-    Step 7: 人工审批 SR3（所有页面）
+    Step 5: TE 最终审计（所有页面）
+    Step 6: 人工审批 SR3（所有页面）
 ```
 
 ---
@@ -341,10 +367,12 @@ END FOR
 
 [PM] 调度 DE 开发 {page}
 
+⚠️ **前置校验（非首页时）：** PM 必须检查 .state.md「逐页人工检查记录」中上一个页面的记录存在且结果为 PASS。如果记录不存在，禁止写入当前页面的 Handoff，必须先完成上一页的人工检查。
+
 2a. 写入 Handoff 文件:
 - 路径: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}.md
 - 白名单: agents/de.md, deliverables/{REQ-ID}/sa/design.md (页面 P{NN} 部分), templates/page-skeleton.html, templates/layouts/{布局}.html, templates/shared/styles.css
-- 输出: deliverables/{REQ-ID}/temp_output/{page}.html
+- 输出: deliverables/{REQ-ID}/output/pages/{page}.html
 
 2b. 更新 .state.md: active_role=DE, current_page={page}, status=running
 
@@ -355,9 +383,14 @@ END FOR
 任务类型: 编码实现
 Handoff 文件: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}.md
 输入物: deliverables/{REQ-ID}/sa/design.md (页面 P{NN} 部分)
-输出物: deliverables/{REQ-ID}/temp_output/{page}.html
+输出物: deliverables/{REQ-ID}/output/pages/{page}.html
 参考: skills/dev-test.md, templates/page-skeleton.html
 ```
+
+DE 首页开发前的环境准备（仅首个页面时执行一次）：
+- 将 templates/shared/ 复制到 deliverables/{REQ-ID}/output/shared/
+- 基于 templates/index-skeleton.html 生成 deliverables/{REQ-ID}/output/index.html
+
 - DE 完成后，PM 自检：文件存在 + 非空 + HTML 结构完整
 - 更新 .state.md: 追加已完成步骤，active_role=PM
 
@@ -367,7 +400,7 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}.md
 
 3a. 写入 Handoff 文件:
 - 路径: deliverables/{REQ-ID}/.handoff/to-te-audit-p{NN}.md
-- 白名单: agents/te.md, deliverables/{REQ-ID}/temp_output/{page}.html, deliverables/{REQ-ID}/te/testcases.md, deliverables/{REQ-ID}/de/code-report.md, templates/test-report-template.md
+- 白名单: agents/te.md, deliverables/{REQ-ID}/output/pages/{page}.html, deliverables/{REQ-ID}/te/testcases.md, deliverables/{REQ-ID}/de/code-report.md, templates/test-report-template.md
 - 输出: deliverables/{REQ-ID}/te/temp-test-report.md
 
 3b. 更新 .state.md: active_role=TE, status=running
@@ -378,7 +411,7 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}.md
 目标角色: TE
 任务类型: 审计验证
 Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-audit-p{NN}.md
-输入物: deliverables/{REQ-ID}/temp_output/{page}.html
+输入物: deliverables/{REQ-ID}/output/pages/{page}.html
 输出物: deliverables/{REQ-ID}/te/temp-test-report.md
 参考: skills/post-verify.md, templates/test-report-template.md
 ```
@@ -403,11 +436,12 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-audit-p{NN}.md
   ```
   [逐页人工检查]
   页面: {page}
-  文件: deliverables/{REQ-ID}/temp_output/{page}.html
+  文件: deliverables/{REQ-ID}/output/pages/{page}.html
   审计报告: deliverables/{REQ-ID}/te/temp-test-report.md
   请确认: 通过 / 驳回（请说明原因）
   ```
 - 用户通过：
+  - 在 .state.md「逐页人工检查记录」追加一行: | {page} | {时间} | PASS | — |
   - 清洗上下文中当前页面 HTML 代码，只保留文件路径
   - 更新 .state.md: pages_done+1, round_count=0
   - 追加日志到 process.log
@@ -432,71 +466,39 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-audit-p{NN}.md
   [人工审批节点]
   评审节点: SR2
   审批内容摘要:
-    - temp_output/ 下所有已完成页面列表
+    - output/pages/ 下所有已完成页面列表
     - 各页 TE 审计报告结论
     - 各页逐页人工检查结论
-  相关产物: deliverables/{REQ-ID}/temp_output/*.html, deliverables/{REQ-ID}/te/temp-test-report.md
+  相关产物: deliverables/{REQ-ID}/output/pages/*.html, deliverables/{REQ-ID}/te/temp-test-report.md
   请确认: 通过 / 驳回（请说明原因）
   ```
 - 用户通过：SR2-record.md 标记 PASS，继续 Step 5
 - 用户驳回：SR2-record.md 标记 FAIL，记录原因，指定需修复的页面，回退到 Step 2（该页面）
 
-**Step 5: DE 代码合并（DEV-2）**
-
-[PM] 调度 DE 合并所有已通过页面
-
-5a. 写入 Handoff 文件:
-- 路径: deliverables/{REQ-ID}/.handoff/to-de-merge.md
-- 白名单: agents/de.md, deliverables/{REQ-ID}/temp_output/ 下所有已通过页面, deliverables/{REQ-ID}/SR2-record.md
-- 输出: deliverables/{REQ-ID}/final_output/pages/ 下对应页面 + final_output/index.html
-
-5b. 更新 .state.md: active_role=DE, status=running
-
-5c. 发出调度指令:
-```
-[调度指令]
-目标角色: DE
-任务类型: 代码合并
-Handoff 文件: deliverables/{REQ-ID}/.handoff/to-de-merge.md
-输入物: deliverables/{REQ-ID}/temp_output/*.html, SR2-record.md
-输出物: deliverables/{REQ-ID}/final_output/pages/*.html, deliverables/{REQ-ID}/final_output/index.html
-参考: skills/dev-test.md
-```
-
-合并规则：
-- 将 temp_output/*.html 复制到 final_output/pages/
-- 修正页面中的资源引用路径（shared/ → ../shared/）
-- 将 templates/shared/ 复制到 final_output/shared/
-- **index.html 更新策略：**
-  - 如果本次有新增或删除页面（页面列表变化）：基于 templates/index-skeleton.html 重新生成 final_output/index.html
-  - 如果仅修改已有页面内容（页面列表不变）：不更新 index.html
-  - 判断依据：对比 final_output/pages/ 中已有文件列表与本次 temp_output/ 文件列表
-- 更新 .state.md: 追加已完成步骤，active_role=PM
-
-**Step 6: TE 最终审计（TEST-2）**
+**Step 5: TE 最终审计（TEST-2）**
 
 [PM] 调度 TE 最终审计所有页面
 
-6a. 写入 Handoff 文件:
+5a. 写入 Handoff 文件:
 - 路径: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
-- 白名单: agents/te.md, deliverables/{REQ-ID}/final_output/ 下所有页面, deliverables/{REQ-ID}/te/testcases.md, templates/test-report-template.md
+- 白名单: agents/te.md, deliverables/{REQ-ID}/output/ 下所有页面, deliverables/{REQ-ID}/te/testcases.md, templates/test-report-template.md
 - 输出: deliverables/{REQ-ID}/te/final-test-report.md
 
-6b. 更新 .state.md: active_role=TE, status=running
+5b. 更新 .state.md: active_role=TE, status=running
 
-6c. 发出调度指令:
+5c. 发出调度指令:
 ```
 [调度指令]
 目标角色: TE
 任务类型: 最终审计验证
 Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
-输入物: deliverables/{REQ-ID}/final_output/*.html
+输入物: deliverables/{REQ-ID}/output/*.html
 输出物: deliverables/{REQ-ID}/te/final-test-report.md
 参考: skills/post-verify.md
 ```
 - 更新 .state.md: 追加已完成步骤，active_role=PM
 
-**Step 7: 功能评审（SR3）— 人工审批**
+**Step 6: 功能评审（SR3）— 人工审批**
 
 [PM] 进入 SR3 人工审批
 
@@ -507,10 +509,10 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
   [人工审批节点]
   评审节点: SR3
   审批内容摘要:
-    - final_output/ 下所有页面列表
+    - output/ 下所有页面列表
     - TE 最终审计报告结论
     - index.html 导航完整性
-  相关产物: deliverables/{REQ-ID}/final_output/pages/*.html, deliverables/{REQ-ID}/final_output/index.html, deliverables/{REQ-ID}/te/final-test-report.md
+  相关产物: deliverables/{REQ-ID}/output/pages/*.html, deliverables/{REQ-ID}/output/index.html, deliverables/{REQ-ID}/te/final-test-report.md
   请确认: 通过 / 驳回（请说明原因）
   ```
 - 用户通过：SR3-record.md 标记 PASS，流程完成
@@ -521,7 +523,7 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 [/ppt-apply 完成]
 需求编号: {REQ-ID}
 产物:
-  - deliverables/{REQ-ID}/final_output/*.html
+  - deliverables/{REQ-ID}/output/*.html
   - deliverables/{REQ-ID}/te/final-test-report.md (PASS)
   - deliverables/{REQ-ID}/SR3-record.md (PASS)
 下一步: 用户输入 /ppt-archive
@@ -555,10 +557,10 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 - 自检：文件存在 + 非空
 
 **Step 4: 代码归档（ARC-3）**
-- cp deliverables/{REQ-ID}/final_output/pages/*.html → output/final/pages/
-- cp deliverables/{REQ-ID}/final_output/shared/ → output/final/shared/（如已存在则更新）
+- cp deliverables/{REQ-ID}/output/pages/*.html → output/final/pages/
+- cp deliverables/{REQ-ID}/output/shared/ → output/final/shared/（如已存在则更新）
 - **index.html 更新策略：**
-  - 如果本次有新增或删除页面（output/final/pages/ 文件列表变化）：基于 deliverables/{REQ-ID}/final_output/index.html 更新 output/final/index.html
+  - 如果本次有新增或删除页面（output/final/pages/ 文件列表变化）：基于 deliverables/{REQ-ID}/output/index.html 更新 output/final/index.html
   - 如果仅修改已有页面内容（页面列表不变）：不更新 output/final/index.html
 - 自检：所有页面文件存在 + index.html 链接有效 + shared/ 资源完整
 

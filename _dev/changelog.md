@@ -6,6 +6,44 @@
 
 ## 2026-05-15
 
+### 逐页人工检查强制执行机制
+
+**问题：** apply 阶段要求每个页面都经过人工检查，但实际执行中 PM 经常只对第一个页面 P01 做人工检查，之后跳过直接进入 SR2。缺乏硬性约束保证每页都走人工确认。
+
+**方案：** 组合方案——前置任务编排 + 逐页状态追踪：
+1. apply 开始时新增 Step 1b「任务编排确认」：PM 生成完整开发计划（列出每个页面的 DE→TE→人工检查步骤），用户确认后才开始开发循环。用户可以直观看到每页都有人工检查环节。
+2. .state.md 新增「逐页人工检查记录」表：每页人工检查通过后 PM 必须追加 PASS 记录。
+3. PM 写入下一页 Handoff 前必须校验上一页有 PASS 记录，否则禁止继续。
+4. 断点恢复时通过该记录判断哪些页面已完成人工确认。
+
+改动涉及：
+- workflow.md：新增 Step 1b 任务编排确认，Step 2 增加前置校验，Step 3b 增加记录写入
+- templates/state-template.md：新增「逐页人工检查记录」表
+- CLAUDE.md / .clinerules：新增「逐页人工检查强制执行」规则段落
+
+---
+
+### 移除 temp_output 中间目录
+
+**问题：** 开发过程中 DE 写入 temp_output/，但该目录没有 shared/ 资源（CSS/JS/图标），导致人工检查时打开页面看到的是样式缺失的效果，无法正确校验。
+
+**方案：** 完全去掉 temp_output 中间目录，DE 直接写入 output/pages/。同时删除 DEV-2 合并步骤（不再需要）。改动涉及：
+- workflow.md：DE 输出改为 output/pages/，删除 Step 5 DEV-2 合并，步骤重新编号
+- init-task.sh：创建 output/pages/ 和 output/shared/ 代替 temp_output/
+- resume-check.sh：只检查 output/pages/ 下文件
+- verify.sh：A类和C类检查改为扫描 output/pages/
+- playwright-check.sh：示例路径更新
+- agents/de.md：输出契约改为 output/pages/，移除合并相关
+- agents/te.md：审计路径改为 output/pages/
+- skills/dev-test.md、post-verify.md：路径更新
+- templates/design-template.md、testcases-template.md、test-report-template.md：路径更新
+- README.md：/ppt-apply 表格删除 DEV-2 行，路径更新
+- _dev/doc/design.md：流程图和目录结构更新
+
+首页开发前环境准备（仅首个页面时执行一次）：将 templates/shared/ 复制到 output/shared/，生成 index.html。
+
+---
+
 ### 人工检查不应有轮次限制
 
 **问题：** 逐页人工检查驳回时也使用了 round_count+1 逻辑，暗示有5轮限制。5轮限制只针对 TE 自动审计失败，人工检查驳回用户想改多少次就改多少次。
