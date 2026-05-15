@@ -20,8 +20,23 @@ echo "=== /ppt-archive 前置检查 ==="
 echo "当前任务: $REQ_ID"
 echo ""
 
+if [ ! -f "$DELIVERABLES/SR2-record.md" ]; then
+  echo '{"status":"FAIL","req_id":"'"$REQ_ID"'","message":"SR2-record.md 不存在，请先完成 SR2 人工审批"}'
+  exit 1
+fi
+
+if ! grep -q "PASS" "$DELIVERABLES/SR2-record.md" 2>/dev/null; then
+  echo '{"status":"FAIL","req_id":"'"$REQ_ID"'","message":"SR2-record.md 未标记 PASS"}'
+  exit 1
+fi
+
 if [ ! -f "$DELIVERABLES/SR3-record.md" ]; then
   echo '{"status":"FAIL","req_id":"'"$REQ_ID"'","message":"SR3-record.md 不存在，请先完成 /ppt-apply 流程"}'
+  exit 1
+fi
+
+if ! grep -q "PASS" "$DELIVERABLES/SR3-record.md" 2>/dev/null; then
+  echo '{"status":"FAIL","req_id":"'"$REQ_ID"'","message":"SR3-record.md 未标记 PASS"}'
   exit 1
 fi
 

@@ -519,6 +519,9 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 - 用户驳回：SR3-record.md 标记 FAIL，记录原因，回退修复
 
 **完成输出**
+
+⚠️ **PM 必须在流程结束时打印以下完成通知，不得省略：**
+
 ```
 [/ppt-apply 完成]
 需求编号: {REQ-ID}
