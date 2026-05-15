@@ -322,8 +322,8 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-testcase-design.md
 ```
 FOR 每个待开发页面 IN design.md 页面清单（跳过已完成）:
     Step 2: DE 开发该页面
-    Step 3: TE 审计该页面（失败则循环修复，最多5轮）
-    Step 3b: 人工检查该页面（轻量确认，非 SR2）
+    Step 3: TE 审计该页面（失败则循环修复，最多5轮，超过上升人工）
+    Step 3b: 人工检查该页面（轻量确认，无轮次限制）
     → 清洗上下文中该页面 HTML 代码，只保留文件路径
     → 继续下一个页面
 END FOR
@@ -416,8 +416,8 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-audit-p{NN}.md
 - 用户驳回：
   - 记录驳回原因
   - 写入新 Handoff: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}-fix-r{N}.md
-  - 更新 .state.md: round_count+1
   - 回到 Step 2（同一页面，DE 修复）
+  - 注意：人工检查驳回无轮次限制，用户可反复修改直到满意
 
 ---
 
