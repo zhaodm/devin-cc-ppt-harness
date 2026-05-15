@@ -14,7 +14,7 @@
 {一句话总结审计结论}
 
 ## 审计范围
-- 审计目标: deliverables/{REQ-ID}/{temp_output|final_output}/
+- 审计目标: deliverables/{REQ-ID}/output/pages/
 - 涉及页面: {页面列表}
 
 ## E2E 测试结果

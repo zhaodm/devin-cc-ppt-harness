@@ -49,14 +49,11 @@ TODO=""
 
 for page in $ALL_PAGES; do
   TOTAL=$((TOTAL + 1))
-  if [ -f "$DELIVERABLES/final_output/$page" ]; then
-    echo "  DONE (final): $page"
-    DONE=$((DONE + 1))
-  elif [ -f "$DELIVERABLES/temp_output/$page" ]; then
-    echo "  DONE (temp):  $page"
+  if [ -f "$DELIVERABLES/output/pages/$page" ]; then
+    echo "  DONE: $page"
     DONE=$((DONE + 1))
   else
-    echo "  TODO:         $page"
+    echo "  TODO: $page"
     TODO="${TODO}${page}\n"
   fi
 done

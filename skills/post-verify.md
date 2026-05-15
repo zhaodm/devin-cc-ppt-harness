@@ -18,7 +18,7 @@ executor: TE
 违反以上任何一条，当前产出无效，必须重新执行。
 
 ## 前置条件
-- 待验证产物存在于 deliverables/{REQ-ID}/temp_output/ 或 final_output/
+- 待验证产物存在于 deliverables/{REQ-ID}/output/pages/
 - DE 的 code-report.md 已提交
 - deliverables/{REQ-ID}/te/testcases.md 存在（测试用例已设计）
 

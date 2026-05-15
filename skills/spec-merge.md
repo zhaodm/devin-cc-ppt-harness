@@ -43,7 +43,7 @@ executor: PM
 ### Step 3: 代码归档（ARC-3）
 1. 复制所有页面文件：
    ```bash
-   cp deliverables/{REQ-ID}/final_output/*.html output/final/
+   cp deliverables/{REQ-ID}/output/*.html output/final/
    ```
 2. 更新或创建 output/final/index.html：
    - 如果 index.html 不存在：基于 templates/index-skeleton.html 创建

@@ -32,7 +32,7 @@ executor: DE
 
 ## 断点续作
 - 开发前 PM 已执行 `bash src/scripts/resume-check.sh`
-- 如果当前页面已存在于 temp_output/ 或 final_output/，跳过该页面
+- 如果当前页面已存在于 output/pages/，跳过该页面
 - 只开发 resume-check.sh 输出的待开发页面
 - 每完成一个页面后，不在上下文中保留该页面的 HTML 代码，只保留文件路径
 
@@ -100,7 +100,7 @@ executor: DE
 
 ```
 [DE 自检清单]
-- [ ] 文件存在: deliverables/{REQ-ID}/temp_output/{page}.html
+- [ ] 文件存在: deliverables/{REQ-ID}/output/pages/{page}.html
 - [ ] 文件非空（> 500 字符）
 - [ ] HTML 无未闭合标签
 - [ ] .slide 容器: width 1280px, height 720px
@@ -123,7 +123,7 @@ executor: DE
 # 开发报告
 
 ## 页面: {page}
-- 文件: deliverables/{REQ-ID}/temp_output/{page}.html
+- 文件: deliverables/{REQ-ID}/output/pages/{page}.html
 - 布局: {布局类型}
 - 卡片数: {N}
 - 图表: {有/无}
@@ -134,12 +134,12 @@ executor: DE
 ```
 
 ## 输出物
-- deliverables/{REQ-ID}/temp_output/{page}.html
+- deliverables/{REQ-ID}/output/pages/{page}.html
 - deliverables/{REQ-ID}/de/code-report.md
 - deliverables/{REQ-ID}/de/test-{page}.md
 
 ## 完成标志
-- temp_output/ 下页面文件存在且非空
+- output/pages/ 下页面文件存在且非空
 - 自检清单全部通过
 - code-report.md 存在
 
@@ -147,7 +147,7 @@ executor: DE
 ```
 [DE 开发完成]
 页面: {page}
-文件: deliverables/{REQ-ID}/temp_output/{page}.html
+文件: deliverables/{REQ-ID}/output/pages/{page}.html
 自检: 全部通过
 请调度 TE 审计验证
 ```

@@ -62,22 +62,12 @@ run_check_a() {
     check_file_exists "$DELIVERABLES/te/testcases.md" "te/testcases.md"
   fi
 
-  if [ -d "$DELIVERABLES/temp_output" ]; then
+  if [ -d "$DELIVERABLES/output/pages" ]; then
     local html_count
-    html_count=$(find "$DELIVERABLES/temp_output" -name '*.html' | wc -l | tr -d ' ')
+    html_count=$(find "$DELIVERABLES/output/pages" -name '*.html' | wc -l | tr -d ' ')
     if [ "$html_count" -gt 0 ]; then
-      for f in "$DELIVERABLES/temp_output"/*.html; do
-        check_file_exists "$f" "temp_output/$(basename "$f")"
-      done
-    fi
-  fi
-
-  if [ -d "$DELIVERABLES/final_output" ]; then
-    local html_count
-    html_count=$(find "$DELIVERABLES/final_output" -name '*.html' | wc -l | tr -d ' ')
-    if [ "$html_count" -gt 0 ]; then
-      for f in "$DELIVERABLES/final_output"/*.html; do
-        check_file_exists "$f" "final_output/$(basename "$f")"
+      for f in "$DELIVERABLES/output/pages"/*.html; do
+        check_file_exists "$f" "output/pages/$(basename "$f")"
       done
     fi
   fi
@@ -131,11 +121,8 @@ run_check_c() {
   echo "=== C类检查：HTML 结构完整性 ==="
 
   local html_files=""
-  if [ -d "$DELIVERABLES/temp_output" ]; then
-    html_files=$(find "$DELIVERABLES/temp_output" -name '*.html' 2>/dev/null)
-  fi
-  if [ -d "$DELIVERABLES/final_output" ]; then
-    html_files="$html_files $(find "$DELIVERABLES/final_output" -name '*.html' 2>/dev/null)"
+  if [ -d "$DELIVERABLES/output/pages" ]; then
+    html_files=$(find "$DELIVERABLES/output/pages" -name '*.html' 2>/dev/null)
   fi
 
   for f in $html_files; do

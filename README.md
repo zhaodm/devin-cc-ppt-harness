@@ -124,12 +124,11 @@ Rule设定约束 --> Skill标准化执行 --> Agent角色制衡 --> Script硬性
 
 | 步骤ID | 活动名称     | 执行角色           | 上游输入                                                     | 交付输出                                                     |
 | ------ | ------------ | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| DEV-1  | 编码实现     | DE                 | `deliverables/sa/design.md`                                  | `deliverables/temp_output/xx`<br/>`deliverables/de/code-report.md` |
-| TEST-1 | 审计验证     | TE                 | `deliverables/temp_output/xx`                                | `deliverables/te/temp-test-report.md`                        |
-| SR2    | **功能评审** | PM（人机交互决策） | `deliverables/temp_output/xx`<br>`deliverables/te/temp-test-report.md` | `deliverables/SR2-record.md`                                 |
-| DEV-2  | 代码合并     | DE                 | `deliverables/temp_output/xx`<br/>`deliverables/SR2-record.md`<br/>`output/final/xx` | `deliverables/final_output/xx`                               |
-| TEST-2 | 审计验证     | TE                 | `deliverables/final_output/xx`                               | `deliverables/te/final-test-report.md`                       |
-| SR3    | **功能评审** | PM（人机交互决策） | `deliverables/final_output/xx`<br>`deliverables/te/final-test-report.md` | `deliverables/SR3-record.md`                                 |
+| DEV-1  | 编码实现     | DE                 | `deliverables/sa/design.md`                                  | `deliverables/output/pages/xx`<br/>`deliverables/de/code-report.md` |
+| TEST-1 | 审计验证     | TE                 | `deliverables/output/pages/xx`                         | `deliverables/te/temp-test-report.md`                        |
+| SR2    | **功能评审** | PM（人机交互决策） | `deliverables/output/pages/xx`<br>`deliverables/te/temp-test-report.md` | `deliverables/SR2-record.md`                                 |
+| TEST-2 | 审计验证     | TE                 | `deliverables/output/pages/xx`                         | `deliverables/te/final-test-report.md`                       |
+| SR3    | **功能评审** | PM（人机交互决策） | `deliverables/output/pages/xx`<br>`deliverables/te/final-test-report.md` | `deliverables/SR3-record.md`                                 |
 
 ---
 
@@ -139,7 +138,7 @@ Rule设定约束 --> Skill标准化执行 --> Agent角色制衡 --> Script硬性
 | ------ | ---------------- | ------------------ | ------------------------------------- | -------------------------- |
 | ARC-1  | 需求归档         | PM                 | `deliverables/sa/requirement-spec.md` | `spec/requirement-spec.md` |
 | ARC-2  | 设计归档         | PM                 | `deliverables/sa/design.md`           | `spec/design.md`           |
-| ARC-3  | 代码归档         | PM                 | `deliverables/final_output/xx`        | `output/final/xx`          |
+| ARC-3  | 代码归档         | PM                 | `deliverables/output/xx`        | `output/final/xx`          |
 | SR4    | **项目结项确认** | PM（人机交互决策） |                                       |                            |
 
 ---

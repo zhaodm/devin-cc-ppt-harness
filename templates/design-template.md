@@ -75,7 +75,7 @@ sequenceDiagram
     participant TE
     PM->>DE: 发送开发任务(P01)
     DE->>DE: TDD开发
-    DE->>PM: 交付 temp_output/P01.html
+    DE->>PM: 交付 output/pages/P01.html
     PM->>TE: 发送审计任务
     TE->>PM: 审计报告
     PM->>用户: 人工审批

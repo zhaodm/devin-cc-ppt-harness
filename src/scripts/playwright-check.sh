@@ -9,7 +9,7 @@ SCREENSHOT_DIR="${2:-}"
 
 if [ -z "$HTML_PATH" ]; then
   echo "用法: playwright-check.sh <html文件路径> [截图保存目录]"
-  echo "示例: playwright-check.sh deliverables/REQ001/temp_output/chapter-01.html deliverables/REQ001/te/screenshots/"
+  echo "示例: playwright-check.sh deliverables/REQ001/output/pages/chapter-01.html deliverables/REQ001/te/screenshots/"
   exit 1
 fi
 

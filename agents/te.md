@@ -14,7 +14,7 @@ model_suggestion: 通用模型
 
 ## 输入契约
 - 测试用例设计：deliverables/{REQ-ID}/sa/requirement-spec.md
-- 审计验证：deliverables/{REQ-ID}/temp_output/ 或 final_output/
+- 审计验证：deliverables/{REQ-ID}/output/pages/
 
 ## 输出契约
 - deliverables/{REQ-ID}/te/testcases.md（测试用例）
