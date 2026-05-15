@@ -1,0 +1,12 @@
+{
+  "name": "ppt-harness-e2e",
+  "private": true,
+  "description": "PPT-Harness Playwright E2E 验证",
+  "scripts": {
+    "e2e": "node src/playwright/e2e-check.js",
+    "install-browser": "npx playwright install chromium"
+  },
+  "devDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

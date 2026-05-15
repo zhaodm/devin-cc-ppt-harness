@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>页面标题</title>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <style>
+    .slide-body { grid-template-columns: repeat(4, 1fr); }
+    .card { padding: 20px 16px; }
+    .card-title { font-size: 14px; }
+    .card-conclusion { font-size: 13px; }
+    .card-details { font-size: 12px; }
+    .card-details li { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="slide-header">
+      <h1>主标题</h1>
+    </div>
+    <div class="slide-keypoint">核心结论金句</div>
+    <div class="slide-body">
+      <div class="card">
+        <div class="card-title">分块 1</div>
+        <div class="card-conclusion">结论</div>
+        <ul class="card-details">
+          <li>细节 1</li>
+          <li>细节 2</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">分块 2</div>
+        <div class="card-conclusion">结论</div>
+        <ul class="card-details">
+          <li>细节 1</li>
+          <li>细节 2</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">分块 3</div>
+        <div class="card-conclusion">结论</div>
+        <ul class="card-details">
+          <li>细节 1</li>
+          <li>细节 2</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">分块 4</div>
+        <div class="card-conclusion">结论</div>
+        <ul class="card-details">
+          <li>细节 1</li>
+          <li>细节 2</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-nav-hint">← → 翻页 | Esc 返回目录</div>
+    <div class="slide-footer">1 / N</div>
+  </div>
+  <script src="../shared/nav.js"></script>
+  <script src="../shared/mermaid-init.js"></script>
+</body>
+</html>

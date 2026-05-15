@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>演示文稿索引</title>
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+    .slide {
+      padding: 48px 64px;
+    }
+    .slide-header {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    .slide-header h1 {
+      font-size: 42px;
+      font-weight: 700;
+    }
+    .slide-header p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+    }
+    .chapter-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+    }
+    .chapter-item {
+      background: var(--bg-card);
+      backdrop-filter: var(--backdrop-blur);
+      -webkit-backdrop-filter: var(--backdrop-blur);
+      border-radius: var(--border-radius);
+      padding: 20px 32px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .chapter-item:hover,
+    .chapter-item:focus {
+      transform: translateX(8px);
+      box-shadow: 0 12px 40px rgba(44, 36, 24, 0.12);
+      outline: none;
+    }
+    .chapter-item.active {
+      border-left: 4px solid var(--accent);
+    }
+    .chapter-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+      width: 48px;
+      flex-shrink: 0;
+    }
+    .chapter-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .chapter-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: auto;
+      padding-left: 24px;
+    }
+    .progress-bar {
+      position: absolute;
+      bottom: 56px;
+      left: 64px;
+      right: 64px;
+      height: 4px;
+      background: rgba(44, 36, 24, 0.08);
+      border-radius: 2px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    .slide-nav-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 64px;
+    }
+    .slide-footer {
+      position: absolute;
+      bottom: 24px;
+      right: 64px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="slide-header">
+      <h1>演示文稿标题</h1>
+      <p>副标题 / 日期 / 作者</p>
+    </div>
+    <div class="chapter-list">
+      <!-- 章节条目 -->
+      <a class="chapter-item" href="chapter-01.html" tabindex="0">
+        <span class="chapter-num">01</span>
+        <span class="chapter-title">章节标题</span>
+        <span class="chapter-desc">简要描述</span>
+      </a>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="slide-nav-hint">↑↓ 选择 | Enter 进入 | ← → 翻页</div>
+    <div class="slide-footer">目录</div>
+  </div>
+
+  <script>
+    (function() {
+      var items = document.querySelectorAll('.chapter-item');
+      var currentFocus = 0;
+
+      function setFocus(index) {
+        items.forEach(function(item) { item.classList.remove('active'); });
+        if (index >= 0 && index < items.length) {
+          currentFocus = index;
+          items[currentFocus].classList.add('active');
+          items[currentFocus].focus();
+        }
+      }
+
+      document.addEventListener('keydown', function(e) {
+        switch(e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            setFocus(Math.min(currentFocus + 1, items.length - 1));
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            setFocus(Math.max(currentFocus - 1, 0));
+            break;
+          case 'Enter':
+            e.preventDefault();
+            if (items[currentFocus]) items[currentFocus].click();
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            if (items[0]) items[0].click();
+            break;
+        }
+      });
+
+      if (items.length > 0) setFocus(0);
+    })();
+  </script>
+</body>
+</html>

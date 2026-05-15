@@ -1,0 +1,57 @@
+# PPT-Harness 项目规则
+
+## 指令映射
+- 用户输入 `/ppt-init`：执行 src/scripts/init-task.sh（自动生成编号），然后按 skills/init-clarify.md 执行需求澄清
+- 用户输入 `/ppt-propose`：执行 src/scripts/propose.sh 检查前置条件，通过后按 skills/propose.md 执行
+- 用户输入 `/ppt-apply`：执行 src/scripts/apply.sh 检查前置条件，通过后按 skills/dev-test.md + skills/post-verify.md 执行
+- 用户输入 `/ppt-archive`：执行 src/scripts/archive.sh 检查前置条件，通过后按 skills/spec-merge.md 执行
+
+## 角色隔离
+- PM：只做调度、检查、人机交互。禁止技术判断、开发、设计、测试
+- SA：只做需求分析、架构设计。禁止开发编码、调度
+- DE：只做编码实现。禁止设计、需求定义、调度
+- TE：只做审计验证。禁止开发、设计、调度
+
+## 产物纪律
+- reference/、spec/、output/final/ 只读，未经人工确认禁止修改
+- 角色间传递必须经 PM 中转
+- 每次写入产物后自检：文件存在 + 非空 + 格式合规
+
+## 流程纪律
+- propose → apply → archive 严格顺序，禁止跳步
+- 每步结束返回 PM，通过后才启动下一步
+- 禁止跳过人工审批节点
+- apply 阶段逐页循环：每个页面必须走完 DE开发→TE审计→人工检查 后才能开始下一个页面，禁止批量开发多页后统一审计
+- 所有页面开发+审计+人工检查完成后，统一进行 SR2 人工审批 → DE合并 → TE最终审计 → SR3 人工审批
+- 逐页人工检查是轻量确认（该页OK），SR2 是正式审批（覆盖所有页面）
+
+## 断点续作与 Token 节流
+- 开发阶段开始前，先执行 src/scripts/resume-check.sh 识别已完成页面，跳过已完成的
+- 每完成一个页面的开发+审计后，清洗上下文中的 HTML 代码记忆，只保留文件路径引用
+- 下一页开发时重新读取 design.md 对应段落，不依赖上下文中的历史代码
+
+## Handoff 协议
+- 角色切换必须通过 Handoff 文件（.handoff/）实现，禁止仅靠对话文本传递任务
+- PM 切换角色前必须: 打印心跳 → 写入 handoff → 更新 .state.md → 发出调度指令 → 写日志
+- 非 PM 角色启动时 MUST 先读取 handoff 文件，仅读取白名单中的文件
+- 非 PM 角色禁止引用对话历史中其他角色的推理或产出
+- 非 PM 角色完成后仅报告文件路径，不在对话中展开产物内容
+- 断点恢复时 PM 仅依据 .state.md 恢复，禁止依赖对话历史
+- Handoff 文件写入后不可修改，重试时创建新文件（追加轮次后缀如 -fix-r2）
+
+## PM 心跳与过程日志
+- PM 每次调度前必须打印心跳: `[PM] {描述}`（调度、验证、审批、异常等时机）
+- 所有角色执行过程记录到 deliverables/{REQ-ID}/process.log
+- 日志格式: `[{时间}] [{角色}] {事件描述}`
+- PM 调度前/验证后各写一条，SA/DE/TE 完成后写一条，审批和异常各写一条
+
+## 页面导航（强制）
+- 每个页面必须支持键盘导航：←/↑ 返回上一页，→/↓ 前进下一页，Esc 返回索引
+
+## 视觉质量（强制）
+- SA 设计方案、DE 编码实现时必须加载 skills/design-visual.md 遵守视觉设计规范
+
+## 禁止事项
+- 禁止单步中执行多角色职责
+- 禁止删除或重命名已有产物
+- 禁止修改本文件及 agents/ 下的角色定义
