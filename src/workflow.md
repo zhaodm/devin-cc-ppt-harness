@@ -389,7 +389,7 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-de-dev-p{NN}.md
 
 DE 首页开发前的环境准备（仅首个页面时执行一次）：
 - 将 templates/shared/ 复制到 deliverables/{REQ-ID}/output/shared/
-- 基于 templates/index-skeleton.html 生成 deliverables/{REQ-ID}/output/index.html
+- 基于 templates/index-skeleton.html 生成 deliverables/{REQ-ID}/output/index.html（将 {FIRST_PAGE} 替换为首个页面文件名）
 
 - DE 完成后，PM 自检：文件存在 + 非空 + HTML 结构完整
 - 更新 .state.md: 追加已完成步骤，active_role=PM
@@ -559,10 +559,8 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 **Step 4: 代码归档（ARC-3）**
 - cp deliverables/{REQ-ID}/output/pages/*.html → output/final/pages/
 - cp deliverables/{REQ-ID}/output/shared/ → output/final/shared/（如已存在则更新）
-- **index.html 更新策略：**
-  - 如果本次有新增或删除页面（output/final/pages/ 文件列表变化）：基于 deliverables/{REQ-ID}/output/index.html 更新 output/final/index.html
-  - 如果仅修改已有页面内容（页面列表不变）：不更新 output/final/index.html
-- 自检：所有页面文件存在 + index.html 链接有效 + shared/ 资源完整
+- cp deliverables/{REQ-ID}/output/index.html → output/final/index.html（跳转入口，始终覆盖以指向正确的首页）
+- 自检：所有页面文件存在 + index.html 跳转目标有效 + shared/ 资源完整
 
 **Step 5: 更新状态**
 - 更新 deliverables/{REQ-ID}/.state.md: phase=done
