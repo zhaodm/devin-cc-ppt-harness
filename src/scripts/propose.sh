@@ -20,6 +20,17 @@ echo "=== /ppt-propose 前置检查 ==="
 echo "当前任务: $REQ_ID"
 echo ""
 
+# 读取 workflow_mode
+WF_MODE=$(grep -m1 '^workflow_mode:' "$DELIVERABLES/.state.md" 2>/dev/null \
+  | sed 's/workflow_mode: *"\{0,1\}\([^"]*\)"\{0,1\}/\1/' | tr -d ' ')
+
+if [ "$WF_MODE" = "fast" ] || [ "$WF_MODE" = "standard" ]; then
+  echo "工作流档位: $WF_MODE — 跳过 propose 阶段"
+  echo ""
+  echo '{"status":"SKIP","req_id":"'"$REQ_ID"'","workflow_mode":"'"$WF_MODE"'","message":"'"$WF_MODE"' 模式，propose 已跳过，请直接执行 /ppt-apply"}'
+  exit 0
+fi
+
 if [ ! -f "$DELIVERABLES/proposal.md" ]; then
   echo '{"status":"FAIL","req_id":"'"$REQ_ID"'","message":"proposal.md 不存在"}'
   exit 1

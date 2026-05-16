@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-05-16
+
+### 三档工作流模式（fast / standard / full）
+
+**问题：** 每次变更需求都要走完整流程（propose → apply → archive），对于只改一两个文件的小需求太繁琐。propose 阶段（需求分析+架构设计+测试用例）对微调完全多余。
+
+**方案：** 在 init 阶段（CHANGE 模式）让用户选择工作流档位：
+- **fast**：微调（1-2个已有页面），跳过 propose、TE审计、SR2/SR3/SR4，仅 DE开发+人工检查后归档
+- **standard**：中等改动（修改多页，不新增删除页面），跳过 propose，保留 TE审计+人工检查+SR2/SR3
+- **full**：完整流程不跳步（NEW 模式默认）
+
+改动涉及：
+- templates/state-template.md：新增 workflow_mode 字段
+- skills/init-clarify.md：新增 Step 0b 档位选择
+- src/scripts/propose.sh：fast/standard 模式输出 SKIP
+- src/scripts/apply.sh：按模式条件检查（跳过 SR1/testcases/verify）
+- src/scripts/archive.sh：fast 模式跳过 SR2/SR3 检查
+- src/workflow.md：各流程增加模式分支（init完成输出/propose跳过/apply循环/archive归档）
+- CLAUDE.md / .clinerules：新增「工作流档位」规则段落
+
+---
+
 ## 2026-05-15
 
 ### DE 误写根目录 output/final/ 而非 deliverables/{REQ-ID}/output/pages/

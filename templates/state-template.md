@@ -1,6 +1,7 @@
 ---
 req_id: "{REQ-ID}"
 phase: "init"
+workflow_mode: "full"
 active_role: "PM"
 status: "running"
 current_page: "N/A"

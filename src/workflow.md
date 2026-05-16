@@ -170,9 +170,10 @@ PM 恢复执行时（新会话或上下文重置后）：
 [/ppt-init 完成]
 需求编号: {REQ-ID}
 模式: {NEW/CHANGE}
+工作流档位: {fast/standard/full}
 产物: deliverables/{REQ-ID}/proposal.md (READY)
 基线备份: {spec/baselines/*.vN.md 或 N/A}
-下一步: 用户输入 /ppt-propose
+下一步: {fast/standard → 用户输入 /ppt-apply | full → 用户输入 /ppt-propose}
 ```
 
 ---
@@ -186,8 +187,9 @@ PM 恢复执行时（新会话或上下文重置后）：
 
 **Step 1: 前置检查**
 - 执行 `bash src/scripts/propose.sh`
+- 如果输出 status=SKIP（fast/standard 模式）：向用户报告跳过原因，提示输入 /ppt-apply，流程结束
 - 如果 FAIL：向用户报告失败原因，终止
-- 如果 PASS：继续
+- 如果 PASS：继续（full 模式）
 
 **Step 2: 调度 SA 需求分析（REQ-1）**
 
@@ -346,19 +348,22 @@ PM 必须在开发循环开始前，向用户呈现完整的开发计划：
 
 ⚠️ **关键约束：以下 Step 2、Step 3、Step 3b 是一个循环体，对每个页面都必须完整执行一遍。禁止批量开发多个页面后再统一审计。每个页面必须走完 DE开发→TE审计→人工检查 后，才能开始下一个页面的开发。**
 
+**模式分支：**
+- **fast 模式：** 跳过 Step 3（TE 审计）和 Step 3a（审计失败处理），DE 开发完直接进入 Step 3b（人工检查）
+- **standard/full 模式：** 完整执行 Step 2 → Step 3 → Step 3b
+
 ```
 FOR 每个待开发页面 IN design.md 页面清单（跳过已完成）:
     Step 2: DE 开发该页面
-    Step 3: TE 审计该页面（失败则循环修复，最多5轮，超过上升人工）
+    Step 3: TE 审计该页面（standard/full 模式，失败则循环修复，最多5轮）
     Step 3b: 人工检查该页面（轻量确认，无轮次限制）
     → 清洗上下文中该页面 HTML 代码，只保留文件路径
     → 继续下一个页面
 END FOR
 
 所有页面开发+审计+人工检查完成后:
-    Step 4: 人工审批 SR2（正式审批，覆盖所有页面）
-    Step 5: TE 最终审计（所有页面）
-    Step 6: 人工审批 SR3（所有页面）
+    fast 模式 → 直接进入完成输出
+    standard/full 模式 → Step 4 → Step 5 → Step 6
 ```
 
 ---
@@ -525,10 +530,11 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 ```
 [/ppt-apply 完成]
 需求编号: {REQ-ID}
+工作流档位: {fast/standard/full}
 产物:
   - deliverables/{REQ-ID}/output/*.html
-  - deliverables/{REQ-ID}/te/final-test-report.md (PASS)
-  - deliverables/{REQ-ID}/SR3-record.md (PASS)
+  - deliverables/{REQ-ID}/te/final-test-report.md (PASS)  ← standard/full 模式
+  - deliverables/{REQ-ID}/SR3-record.md (PASS)  ← standard/full 模式
 下一步: 用户输入 /ppt-archive
 ```
 
@@ -550,14 +556,18 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
   - 无 → 首次归档模式（copy）
 
 **Step 2: 需求归档（ARC-1）**
-- **首次模式：** cp deliverables/{REQ-ID}/sa/requirement-spec.md → spec/requirement-spec.md
-- **变更模式：** 将 deliverables/{REQ-ID}/sa/requirement-spec.md 中的变更内容 merge 到 spec/requirement-spec.md（保留原有内容，追加/修改变更部分，标注变更来源 REQ-ID）
-- 自检：文件存在 + 非空
+- **fast 模式：** 跳过（无新的 requirement-spec.md）
+- **standard 模式：** 跳过（沿用现有 spec/requirement-spec.md）
+- **full 模式 - 首次：** cp deliverables/{REQ-ID}/sa/requirement-spec.md → spec/requirement-spec.md
+- **full 模式 - 变更：** 将 deliverables/{REQ-ID}/sa/requirement-spec.md 中的变更内容 merge 到 spec/requirement-spec.md（保留原有内容，追加/修改变更部分，标注变更来源 REQ-ID）
+- 自检：文件存在 + 非空（full 模式）
 
 **Step 3: 设计归档（ARC-2）**
-- **首次模式：** cp deliverables/{REQ-ID}/sa/design.md → spec/design.md
-- **变更模式：** 将 deliverables/{REQ-ID}/sa/design.md 中的变更内容 merge 到 spec/design.md（新增页面追加到页面清单，修改页面更新对应段落，删除页面标记移除）
-- 自检：文件存在 + 非空
+- **fast 模式：** 跳过（无新的 design.md）
+- **standard 模式：** 跳过（沿用现有 spec/design.md）
+- **full 模式 - 首次：** cp deliverables/{REQ-ID}/sa/design.md → spec/design.md
+- **full 模式 - 变更：** 将 deliverables/{REQ-ID}/sa/design.md 中的变更内容 merge 到 spec/design.md（新增页面追加到页面清单，修改页面更新对应段落，删除页面标记移除）
+- 自检：文件存在 + 非空（full 模式）
 
 **Step 4: 代码归档（ARC-3）**
 - cp deliverables/{REQ-ID}/output/pages/*.html → output/final/pages/
@@ -570,6 +580,10 @@ Handoff 文件: deliverables/{REQ-ID}/.handoff/to-te-final-audit.md
 - 追加日志到 process.log
 
 **Step 6: 项目结项确认（SR4）**
+
+**fast 模式：** 跳过 SR4，直接结项（Step 5 已将 phase 设为 done）。
+
+**standard/full 模式：**
 - 基于 templates/sr-record-template.md 创建 deliverables/{REQ-ID}/SR4-record.md
 - 向用户呈现（使用人工审批呈现格式）：
   ```

@@ -28,6 +28,33 @@ executor: PM（SA 顾问协助）
 2. 向用户确认变更范围："本次变更涉及哪些内容？（新增页面/修改现有页面/删除页面/内容调整）"
 3. 记录变更类型和涉及范围，后续步骤仅围绕变更点展开
 
+### Step 0b: 工作流档位选择
+
+PM 向用户呈现三档选择（仅 CHANGE 模式时触发，NEW 模式默认 full 跳过此步）：
+
+```
+[工作流档位选择]
+本次变更范围决定流程精简程度：
+
+  fast     — 微调（改文字/图标/样式，1-2个已有页面）
+             跳过: propose、TE审计、SR2/SR3
+             流程: init → apply(DE开发→人工检查) → archive
+
+  standard — 中等改动（修改多页内容/布局，不新增删除页面）
+             跳过: propose
+             流程: init → apply(完整循环) → archive
+
+  full     — 大改动（新增页面、结构变更、重设计）
+             完整流程: init → propose → apply → archive
+
+请选择档位: fast / standard / full
+```
+
+用户选择后：
+- 更新 deliverables/{REQ-ID}/.state.md 的 workflow_mode 字段
+- fast/standard 模式下，需求澄清简化为：确认改动的页面列表 + 改动描述，直接生成 proposal.md
+- full 模式下，继续完整的 Step 1-5 需求澄清
+
 ### Step 1: 纲要解读
 1. 读取 reference/ 下所有文件，逐个分析内容
 2. 如有图片文件（png/jpg/jpeg/gif），调用 zai-vision MCP 识别内容
@@ -145,7 +172,8 @@ executor: PM（SA 顾问协助）
 [需求澄清完成]
 需求编号: {REQ-ID}
 模式: {NEW/CHANGE}
+工作流档位: {fast/standard/full}
 Proposal 状态: READY
 基线备份: {spec/baselines/*.vN.md 或 N/A}
-下一步: 输入 /ppt-propose 启动需求分析与架构设计
+下一步: {fast/standard → 输入 /ppt-apply | full → 输入 /ppt-propose}
 ```

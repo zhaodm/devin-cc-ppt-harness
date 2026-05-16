@@ -47,6 +47,15 @@
 - 断点恢复时 PM 仅依据 .state.md 恢复，禁止依赖对话历史
 - Handoff 文件写入后不可修改，重试时创建新文件（追加轮次后缀如 -fix-r2）
 
+## 工作流档位
+- init 阶段（CHANGE 模式）PM 必须让用户选择工作流档位: fast / standard / full
+- NEW 模式默认 full，不提供选择
+- 档位一旦选定记录到 .state.md 的 workflow_mode 字段，后续所有脚本和流程据此判断跳步
+- fast: 跳过 propose、TE审计、SR2/SR3/SR4，仅保留 DE开发+人工检查
+- standard: 跳过 propose，保留 TE审计+人工检查+SR2/SR3
+- full: 完整流程不跳步
+- 禁止在流程中途变更档位（如需升级，重新 init）
+
 ## PM 心跳与过程日志
 - PM 每次调度前必须打印心跳: `[PM] {描述}`（调度、验证、审批、异常等时机）
 - 所有角色执行过程记录到 deliverables/{REQ-ID}/process.log
