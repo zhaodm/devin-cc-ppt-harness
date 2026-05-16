@@ -20,6 +20,7 @@
 
 ## 产物纪律
 - reference/、spec/、output/final/ 只读，未经人工确认禁止修改
+- DE 开发阶段只能写入 deliverables/{REQ-ID}/output/pages/，绝对禁止写入根目录 output/final/（仅 archive 归档时使用）
 - 角色间传递必须经 PM 中转
 - 每次写入产物后自检：文件存在 + 非空 + 格式合规
 

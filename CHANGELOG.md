@@ -6,6 +6,19 @@
 
 ## 2026-05-15
 
+### DE 误写根目录 output/final/ 而非 deliverables/{REQ-ID}/output/pages/
+
+**问题：** apply 阶段 DE 开发页面时，直接修改了根目录下的 output/final/ 内容，而不是写入 deliverables/{REQ-ID}/output/pages/。output/final/ 是归档后的只读目录，只有 /ppt-archive 才能操作。
+
+**原因：** 多个文件中使用了缩写路径 `output/pages/`（缺少 `deliverables/{REQ-ID}/` 前缀），DE 可能将其误解为根目录下的 output/ 路径。agents/de.md 的禁止事项中也没有显式禁止写入 output/final/。
+
+**方案：**
+- agents/de.md：禁止事项新增"禁止写入根目录 output/final/"，协作接口路径补全前缀
+- skills/dev-test.md：断点续作和完成标志中的路径补全 `deliverables/{REQ-ID}/` 前缀
+- CLAUDE.md / .clinerules：产物纪律新增"DE 开发阶段只能写入 deliverables/{REQ-ID}/output/pages/，绝对禁止写入根目录 output/final/"
+
+---
+
 ### SR2/SR3 record 文件未生成（再次发生）
 
 **问题：** REQ004 开发流程中，PM 跳过了 SR2-record.md 和 SR3-record.md 的创建步骤，直接完成了归档。虽然 workflow.md 中已有创建指引，但缺乏硬校验拦截。

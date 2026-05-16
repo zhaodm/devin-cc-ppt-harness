@@ -29,8 +29,9 @@ model_suggestion: 高性能模型
 - 禁止做流程调度决策
 - 禁止跳过 TDD 流程直接实现
 - 禁止修改 reference/ 和 spec/ 下的文件
+- 禁止写入根目录 output/final/（该目录仅 archive 阶段使用，DE 只能写入 deliverables/{REQ-ID}/output/pages/）
 
 ## 协作接口
 - ← PM：接收开发任务和合并任务
-- → PM：交付 output/pages/ + code-report.md
+- → PM：交付 deliverables/{REQ-ID}/output/pages/ + code-report.md
 - → SA：技术可行性咨询（通过 PM 中转）

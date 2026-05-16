@@ -32,7 +32,7 @@ executor: DE
 
 ## 断点续作
 - 开发前 PM 已执行 `bash src/scripts/resume-check.sh`
-- 如果当前页面已存在于 output/pages/，跳过该页面
+- 如果当前页面已存在于 deliverables/{REQ-ID}/output/pages/，跳过该页面
 - 只开发 resume-check.sh 输出的待开发页面
 - 每完成一个页面后，不在上下文中保留该页面的 HTML 代码，只保留文件路径
 
@@ -139,7 +139,7 @@ executor: DE
 - deliverables/{REQ-ID}/de/test-{page}.md
 
 ## 完成标志
-- output/pages/ 下页面文件存在且非空
+- deliverables/{REQ-ID}/output/pages/ 下页面文件存在且非空
 - 自检清单全部通过
 - code-report.md 存在
 
